@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toko Thrifting</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f5f5f5;
+    color: #222;
+}
+
+/* NAVBAR */
+nav {
+    background: #111;
+    color: white;
+    padding: 18px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+.cart-btn {
+    background: white;
+    color: #111;
+    border: none;
+    padding: 9px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+/* HERO */
+.hero {
+    min-height: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 50px 20px;
+    background: linear-gradient(135deg, #111, #444);
+    color: white;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 18px;
+    margin-bottom: 25px;
+}
+
+.hero button {
+    background: white;
+    border: none;
+    padding: 13px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* PRODUK */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 50px auto;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.search {
+    display: block;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto 30px;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+/* GRID */
+.products {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,.08);
+    transition: .3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 18px;
+}
+
+.card h3 {
+    margin-bottom: 8px;
+}
+
+.price {
+    color: #e63946;
+    font-weight: bold;
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.card button {
+    width: 100%;
+    padding: 11px;
+    border: none;
+    background: #111;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.card button:hover {
+    background: #333;
+}
+
+/* ABOUT */
+.about {
+    background: #111;
+    color: white;
+    padding: 60px 10%;
+    text-align: center;
+    margin-top: 60px;
+}
+
+.about p {
+    max-width: 700px;
+    margin: 15px auto;
+    line-height: 1.7;
+}
+
+/* FOOTER */
+footer {
+    background: #000;
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+
+/* MODAL KERANJANG */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+    z-index: 200;
+}
+
+.cart {
+    background: white;
+    width: 90%;
+    max-width: 500px;
+    margin: 70px auto;
+    padding: 25px;
+    border-radius: 15px;
+}
+
+.cart-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.close {
+    cursor: pointer;
+    font-size: 25px;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.total {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.checkout {
+    width: 100%;
+    background: #25D366;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.empty {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav>
+    <div class="logo">🛍️ Toko Thrifting</div>
+
+    <div>
+        <a href="#produk">Produk</a>
+        <a href="#tentang">Tentang</a>
+        <button class="cart-btn" onclick="openCart()">
+            🛒 Keranjang (<span id="cartCount">0</span>)
+        </button>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div>
+        <h1>Toko Thrifting</h1>
+        <p>Fashion keren, harga terjangkau, dan pilihan unik.</p>
+        <button onclick="document.getElementById('produk').scrollIntoView()">
+            Lihat Produk
+        </button>
+    </div>
+</section>
+
+<!-- PRODUK -->
+<section class="container" id="produk">
+
+    <h2 class="title">🔥 Koleksi Thrifting</h2>
+
+    <input
+        type="text"
+        class="search"
+        id="search"
+        placeholder="🔍 Cari produk..."
+        onkeyup="searchProduct()"
+    >
+
+    <div class="products" id="productList">
+
+        <div class="card" data-name="Hoodie Vintage">
+            <img src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=600&q=80">
+            <div class="card-content">
+                <h3>Hoodie Vintage</h3>
+                <p>Hoodie second berkualitas.</p>
+                <div class="price">Rp85.000</div>
+                <button onclick="addCart('Hoodie Vintage',85000)">
+                    + Keranjang
+                </button>
+            </div>
+        </div>
+
+        <div class="card" data-name="Jaket Denim">
+            <img src="https://images.unsplash.com/photo-1523205565295-f8eae8a7f1b1?auto=format&fit=crop&w=600&q=80">
+            <div class="card-content">
+                <h3>Jaket Denim</h3>
+                <p>Jaket denim vintage keren.</p>
+                <div class="price">Rp120.000</div>
+                <button onclick="addCart('Jaket Denim',120000)">
+                    + Keranjang
+                </button>
+            </div>
+        </div>
+
+        <div class="card" data-name="Kaos Vintage">
+            <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80">
+            <div class="card-content">
+                <h3>Kaos Vintage</h3>
+                <p>Kaos vintage nyaman dipakai.</p>
+                <div class="price">Rp55.000</div>
+                <button onclick="addCart('Kaos Vintage',55000)">
+                    + Keranjang
+                </button>
+            </div>
+        </div>
+
+        <div class="card" data-name="Celana Cargo">
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80">
+            <div class="card-content">
+                <h3>Celana Cargo</h3>
+                <p>Celana cargo second pilihan.</p>
+                <div class="price">Rp90.000</div>
+                <button onclick="addCart('Celana Cargo',90000)">
+                    + Keranjang
+                </button>
+            </div>
+        </div>
+
+        <div class="card" data-name="Kemeja Flanel">
+            <img src="https://images.unsplash.com/photo-1603252110481-7ba873bf42ab?auto=format&fit=crop&w=600&q=80">
+            <div class="card-content">
+                <h3>Kemeja Flanel</h3>
+                <p>Kemeja flanel bergaya casual.</p>
+                <div class="price">Rp70.000</div>
+                <button onclick="addCart('Kemeja Flanel',70000)">
+                    + Keranjang
+                </button>
+            </div>
+        </div>
+
+        <div class="card" data-name="Sweater Vintage">
+            <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=600&q=80">
+            <div class="card-content">
+                <h3>Sweater Vintage</h3>
+                <p>Sweater hangat dan stylish.</p>
+                <div class="price">Rp75.000</div>
+                <button onclick="addCart('Sweater Vintage',75000)">
+                    + Keranjang
+                </button>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="tentang">
+    <h2>Tentang Toko Thrifting</h2>
+
+    <p>
+        Toko Thrifting menyediakan berbagai macam pakaian second
+        berkualitas dengan harga terjangkau. Cocok untuk kamu yang
+        ingin tampil keren tanpa mengeluarkan banyak biaya.
+    </p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>© 2026 Toko Thrifting</p>
+    <p>Fashion Second • Affordable • Stylish</p>
+</footer>
+
+<!-- MODAL -->
+<div class="modal" id="cartModal">
+
+    <div class="cart">
+
+        <div class="cart-header">
+            <h2>🛒 Keranjang</h2>
+            <span class="close" onclick="closeCart()">×</span>
+        </div>
+
+        <div id="cartItems"></div>
+
+        <div class="total">
+            Total: Rp<span id="total">0</span>
+        </div>
+
+        <button class="checkout" onclick="checkout()">
+            💬 Checkout via WhatsApp
+        </button>
+
+    </div>
+</div>
+
+<script>
+
+let cart = [];
+
+function addCart(name, price) {
+
+    cart.push({
+        name: name,
+        price: price
+    });
+
+    updateCart();
+
+    alert(name + " berhasil ditambahkan ke keranjang!");
+}
+
+function updateCart() {
+
+    let items = document.getElementById("cartItems");
+    let count = document.getElementById("cartCount");
+    let total = document.getElementById("total");
+
+    count.innerText = cart.length;
+
+    if (cart.length === 0) {
+        items.innerHTML =
+            '<div class="empty">Keranjang masih kosong.</div>';
+    } else {
+
+        items.innerHTML = "";
+
+        cart.forEach((item, index) => {
+
+            items.innerHTML += `
+                <div class="cart-item">
+                    <span>${item.name}</span>
+                    <span>
+                        Rp${item.price.toLocaleString('id-ID')}
+                        <button
+                            onclick="removeCart(${index})"
+                            style="margin-left:8px;border:none;background:#e63946;color:white;border-radius:5px;padding:4px 7px;cursor:pointer;">
+                            ×
+                        </button>
+                    </span>
+                </div>
+            `;
+        });
+    }
+
+    let totalPrice = cart.reduce(
+        (sum, item) => sum + item.price,
+        0
+    );
+
+    total.innerText = totalPrice.toLocaleString('id-ID');
+}
+
+function removeCart(index) {
+
+    cart.splice(index, 1);
+
+    updateCart();
+}
+
+function openCart() {
+
+    document.getElementById("cartModal").style.display = "block";
+
+    updateCart();
+}
+
+function closeCart() {
+
+    document.getElementById("cartModal").style.display = "none";
+}
+
+function checkout() {
+
+    if (cart.length === 0) {
+        alert("Keranjang masih kosong!");
+        return;
+    }
+
+    let pesan = "Halo Toko Thrifting, saya ingin membeli:%0A%0A";
+
+    cart.forEach((item, index) => {
+
+        pesan +=
+            (index + 1) + ". " +
+            item.name +
+            " - Rp" +
+            item.price.toLocaleString('id-ID') +
+            "%0A";
+    });
+
+    let totalPrice = cart.reduce(
+        (sum, item) => sum + item.price,
+        0
+    );
+
+    pesan +=
+        "%0ATotal: Rp" +
+        totalPrice.toLocaleString('id-ID');
+
+    /*
+       GANTI 628XXXXXXXXXX
+       DENGAN NOMOR WHATSAPP TOKO KAMU
+    */
+
+    let nomor = "628XXXXXXXXXX";
+
+    window.open(
+        "https://wa.me/" + nomor + "?text=" + pesan,
+        "_blank"
+    );
+}
+
+function searchProduct() {
+
+    let keyword =
+        document.getElementById("search").value.toLowerCase();
+
+    let products =
+        document.querySelectorAll(".card");
+
+    products.forEach(product => {
+
+        let name =
+            product.dataset.name.toLowerCase();
+
+        if (name.includes(keyword)) {
+            product.style.display = "block";
+        } else {
+            product.style.display = "none";
+        }
+    });
+}
+
+window.onclick = function(event) {
+
+    let modal =
+        document.getElementById("cartModal");
+
+    if (event.target === modal) {
+        closeCart();
+    }
+};
+
+updateCart();
+
+</script>
+
+</body>
+</html>
